@@ -6,6 +6,7 @@ import TodoForm from "./TodoForm";
 import TodoLi from "./TodoLi";
 import { getDate } from '../../utils/getDate';
 import axios from 'axios';
+import ProgressBar from 'react-bootstrap/ProgressBar';
 //const REACT_APP_TODOS = process.env.REACT_APP_TODOS;
 //const REACT_APP_BASEURL = process.env.REACT_APP_BASEURL;
 
@@ -14,6 +15,8 @@ const TodoList = () => {
     let history = useHistory();
     const [todos, setTodos] = useState([]);
     const [infoUser, setInfoUser] = useState({});
+    const [toggle, setToggle] = useState(false);
+    const [pourcent, setPourcent] = useState(0);
 
     /**
      * (1) permet de récupérer les informations de l'utilisateur actuel depuis la BDD
@@ -51,10 +54,11 @@ const TodoList = () => {
     }, [setInfoUser])
 
     /**
-     * (1) permet de revenir sur /signin si on est pas authentifié
+     * (2) permet de revenir sur /signin si on est pas authentifié
 
      */
     useEffect(() => {
+
         if (isLoggin_in()) {
             history.push('/signin');
         }
@@ -62,9 +66,8 @@ const TodoList = () => {
     }, [history]);
 
     /**
-     *(2) permet de récupérer les todos depuis la BDD
+     *(3) permet de récupérer les todos depuis la BDD
      */
-
     useEffect(() => {
         let isShow = true;
         if (!!window.localStorage['data']) {
@@ -88,6 +91,14 @@ const TodoList = () => {
         }
     }, [setTodos]);
 
+    useEffect(() => {
+        const calculProgressBar = () => {
+            const resultat = todos.filter(todo => todo.completed);
+            setPourcent((resultat.length / todos.length) * 100);
+        }
+        calculProgressBar();
+    })
+
     /**
      * permet d'ajouter un todo dans le state puis dans la BDD
      * @param {Object} todo 
@@ -103,7 +114,7 @@ const TodoList = () => {
             ref_todo: new Date().getTime()
         };
 
-        setTodos([...todos, data]);
+
 
         axios.post('http://localhost:5000/api/todos', data, {
             method: 'POST',
@@ -114,7 +125,10 @@ const TodoList = () => {
                 'Authorization': `Bearer ${JSON.parse(window.localStorage['data']).token}`
             }
         })
-            .then(response => console.log(response))
+            .then(response => {
+                data.id = response.data.id;
+                setTodos([...todos, data]);
+            })
             .catch(err => { console.log(err) })
     }
 
@@ -134,7 +148,7 @@ const TodoList = () => {
                 'Authorization': `Bearer ${JSON.parse(window.localStorage['data']).token}`
             }
         })
-            .then(response => console.log(response))
+            .then(response => { })
             .catch(err => { console.log(err) })
     }
 
@@ -153,17 +167,18 @@ const TodoList = () => {
         });
 
         setTodos([array][0]);
-     
-            axios.put(`http://localhost:5000/api/todos/${id} `, {currentTodoCompleted}, {
-                    method: 'PUT',
-                    mode: 'cors',
-                    headers: {
-                        'Access-Control-Allow-Origin': true,
-                        'Authorization': `Bearer ${JSON.parse(window.localStorage['data']).token}`
-                    }
-                })
-                    .then(response => console.log(response))
-                    .catch(err => { console.log(err) })
+        setToggle(!toggle);
+
+        axios.put(`http://localhost:5000/api/todos/${id} `, { currentTodoCompleted }, {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'Access-Control-Allow-Origin': true,
+                'Authorization': `Bearer ${JSON.parse(window.localStorage['data']).token}`
+            }
+        })
+            .then(response => console.log(response))
+            .catch(err => { console.log(err) })
     }
 
 
@@ -173,6 +188,7 @@ const TodoList = () => {
     return (
         <div>
             TOODLIST PAGE {infoUser.username}
+            <ProgressBar animated now={pourcent} />
             <TodoForm handleAddTodo={handleAddTodo} />
             <TodoLi todos={todos} handleDeleteTodo={handleDeleteTodo} handleToggleTodo={handleToggleTodo} />
         </div>
