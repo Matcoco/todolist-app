@@ -1,11 +1,11 @@
 
 import { useEffect, useContext } from "react";
 import { useHistory } from "react-router";
-import { SigninContext } from '../signin/SigninContext';
+import { myContext } from '../../reducerAndContext/context';
 
 const ContactMe = () => {
     let history = useHistory();
-    const connexion = useContext(SigninContext);  
+    const connexion = useContext(myContext);  
     useEffect(() => {
         if (connexion.isLoggin) {
             history.push('/signin');

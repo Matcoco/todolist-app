@@ -8,17 +8,17 @@ import { useContext } from 'react';
 import { useHistory } from 'react-router';
 
 import { NavLink } from "react-router-dom";
-import { SigninContext } from '../signin/SigninContext';
+import { myContext } from '../../reducerAndContext/context';
 
 
-function Navigation({handleLoggoutState}) {
+function Navigation() {
 
     let history = useHistory();
-    const connexion = useContext(SigninContext);
+    const { state, handleLoggoutState } = useContext(myContext);
  
     const handlerSignout = () => {
         window.localStorage.removeItem(process.env.REACT_APP_THING);
-        if (connexion.isloggin) {
+        if (state.isloggin) {
             handleLoggoutState(false);
             history.push('/signin');
         }
@@ -26,7 +26,7 @@ function Navigation({handleLoggoutState}) {
 
     return (
         <div>
-            {connexion.isloggin && <Navbar bg="light" expand="lg">
+            {state.isloggin && <Navbar bg="light" expand="lg">
                 <Navbar.Brand href="#home">My SUPER ToDoList</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">

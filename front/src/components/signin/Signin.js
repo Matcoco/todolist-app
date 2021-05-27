@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useHistory } from 'react-router';
+import { myContext } from '../../reducerAndContext/context';
 
 const SIGIN_URL = process.env.REACT_APP_SIGNIN;
 
 
-function Signin({handleLoggoutState}) {
+function Signin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { handleLoggoutState } = useContext(myContext);
     let history = useHistory();
 
     const handleSubmitButton = (event) => {
@@ -45,7 +47,7 @@ function Signin({handleLoggoutState}) {
 
     return (
 
-        <Form>
+        <Form onSubmit={(event) => handleSubmitButton(event)}>
             <Form.Group controlId="formBasicEmail">
                 <Form.Label>Email address</Form.Label>
                 <Form.Control type="email" placeholder="Enter email" value={email} onChange={(event) => setEmail(event.target.value)} />
@@ -58,7 +60,7 @@ function Signin({handleLoggoutState}) {
                 <Form.Label>Password</Form.Label>
                 <Form.Control type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} />
             </Form.Group>
-            <Button variant="primary" type="submit" onClick={(event) => handleSubmitButton(event)}>Connexion</Button>
+            <Button variant="primary" type="submit">Connexion</Button>
         </Form>
 
     )

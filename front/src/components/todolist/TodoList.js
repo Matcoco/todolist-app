@@ -7,6 +7,8 @@ import TodoLi from "./TodoLi";
 import { getDate } from '../../utils/getDate';
 import axios from 'axios';
 import ProgressBar from 'react-bootstrap/ProgressBar';
+import TodoFormViewEdit from './TodoFormViewEdit';
+
 //const REACT_APP_TODOS = process.env.REACT_APP_TODOS;
 //const REACT_APP_BASEURL = process.env.REACT_APP_BASEURL;
 
@@ -17,6 +19,7 @@ const TodoList = () => {
     const [infoUser, setInfoUser] = useState({});
     const [toggle, setToggle] = useState(false);
     const [pourcent, setPourcent] = useState(0);
+    const [toggleEdit, setToggleEdit] = useState(true);
 
     /**
      * (1) permet de récupérer les informations de l'utilisateur actuel depuis la BDD
@@ -179,10 +182,16 @@ const TodoList = () => {
         })
             .then(response => console.log(response))
             .catch(err => { console.log(err) })
+
+
     }
 
-
-
+    const handleEditTodo = (event, id) => {
+        const element = document.getElementById(`${id}`);
+        const currentClass = element.firstElementChild.className;
+        console.log(currentClass);
+        element.firstElementChild.className = `${currentClass} editing`;
+    }
 
 
     return (
@@ -190,7 +199,7 @@ const TodoList = () => {
             TOODLIST PAGE {infoUser.username}
             <ProgressBar animated now={pourcent} />
             <TodoForm handleAddTodo={handleAddTodo} />
-            <TodoLi todos={todos} handleDeleteTodo={handleDeleteTodo} handleToggleTodo={handleToggleTodo} />
+            <TodoLi todos={todos} handleDeleteTodo={handleDeleteTodo} handleToggleTodo={handleToggleTodo} handleEditTodo={handleEditTodo} toggleEdit={toggleEdit}/>
         </div>
     );
 }
