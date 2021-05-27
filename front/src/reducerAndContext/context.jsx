@@ -1,0 +1,1 @@
+export const myContext = React.createContext();
